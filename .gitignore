@@ -57,3 +57,8 @@ typings/
 # dotenv environment variables file
 .env
 
+.vscode
+chosenImage.jpg
+err.log
+out.log
+response.txt
