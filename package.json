@@ -1,0 +1,23 @@
+{
+  "name": "bing-lockscreen",
+  "version": "1.0.0",
+  "description": "Sets your lockscreen to beautiful pictures from Bing on Ubuntu",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodejs index.js",
+    "stop": "nodejs index.js"
+  },
+  "os": [
+    "darwin",
+    "linux"
+  ],
+  "author": "Austin Hodge",
+  "license": "MIT",
+  "dependencies": {
+    "cron": "^1.3.0",
+    "moment-timezone": "^0.5.14",
+    "npm-consider": "^1.5.1",
+    "request": "^2.83.0",
+    "shelljs": "^0.7.8"
+  }
+}
