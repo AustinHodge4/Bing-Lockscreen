@@ -8,7 +8,7 @@ const request = require('request');
 const shell = require('shelljs');
 
 const subscriptionKey = '65b6410d6cd94dc99b00e719c1dc5b40';
-const searchQueries = ['Windows Spotlight Wallpapers', 'Most Beautiful Landscapes', 'Most Breathtaking Views', 'best landscape photography'];
+const searchQueries = ['Windows Spotlight Wallpapers', 'Most Beautiful Landscapes', 'Most Breathtaking Views', 'best landscape photography', 'mountain view', 'great wall', 'famous castle'];
 
 var runningJob = new cron.CronJob(
     '0 */45 * * * *',  // s(0-59) m(0-59) h(0-23) d(1-31) m(0-11) w(0-6) Run every 45 minutes of the hour ex. 2:00, 2:45, 3:00, etc
