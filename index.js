@@ -53,4 +53,4 @@ function chooseBackground(){
 }
 
 chooseBackground();
-//runningJob.start();
+runningJob.start();
