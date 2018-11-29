@@ -2,12 +2,11 @@
 
 const cron = require('cron');
 const moment = require('moment-timezone');
-const https = require('https');
 const fs = require('fs');
 const request = require('request');
 const shell = require('shelljs');
+const fetch = require('node-fetch');
 
-const subscriptionKey = '65b6410d6cd94dc99b00e719c1dc5b40';
 const searchQueries = ['Windows Spotlight Wallpapers', 'Most Beautiful Landscapes', 'Most Breathtaking Views', 'best landscape photography', 'mountain view', 'great wall', 'famous castle', 'galaxy night', 'santorini sunset', 'views'];
 
 var runningJob = new cron.CronJob(
@@ -23,31 +22,14 @@ var runningJob = new cron.CronJob(
     moment.tz.guess()
 );
 function chooseBackground(){
-    // Bing Search API Endpoints
-    let host = 'api.cognitive.microsoft.com';
-    let path = '/bing/v7.0/images/search';
-    let chosenImage = '';
+      let google_image_search = function(query){
+        console.log('Searching the Web for: ' + query);
+        let image_index = Math.floor(Math.random() * 19) + 1
+        let endpoint = 'https://www.googleapis.com/customsearch/v1?key=AIzaSyD7IaKJRHEyiXmWdg9yKz-6ULYJBOSlYkM&cx=003800074670516219078%3Az7ex1om7zts&imgSize=huge&imgType=photo&num=1&searchType=image&q='+query+'&start='+image_index;
 
-    let response_handler = function (response) {
-        let body = '';
-        response.on('data', function (d) {
-            // Retrieve the json data
-            body += d;
-        });
-        response.on('end', function () {
-            // Convert the data to JSON object
-            let images = JSON.parse(body)
-            let result = JSON.stringify(images, null, '  ');
-            
-            let imgURLS = [];
-            for (let img in images.value){
-                imgURLS.push(images.value[img].contentUrl);
-            }
-            // Choose a random url from the image urls
-            var randomIndex = Math.floor(Math.random() * imgURLS.length);
-            chosenImage = imgURLS[randomIndex];
-            console.log(chosenImage);
-            
+        fetch(endpoint).then(res => res.json())
+        .then(json => {
+            let image_url = json.items[0].link;
             var download = function(uri, filename, callback){
                 request.head(uri, function(err, res, body){
                   console.log('content-type:', res.headers['content-type']);
@@ -55,37 +37,20 @@ function chooseBackground(){
                   // write image data to file and return callback on close/exit
                   request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
                 });
-              };
-              // download the image and set ubuntu desktop background once done
-              download(chosenImage, 'chosenImage.jpg', function(){
+            };
+            // download the image and set ubuntu desktop background once done
+            download(image_url, 'chosenImage.jpg', function(){
                 console.log('...Setting Background...');
                 let pictureFilePath = 'file://'+__dirname + '/chosenImage.jpg';
                 shell.exec('gsettings set org.gnome.desktop.background picture-uri '+pictureFilePath+'', function(stdout, stderr, std){
                     console.log(stderr);
                 });
             });
-        });
-        response.on('error', function (e) {
-            console.log('Error: ' + e.message);
-        });
-    };
-    let bing_web_search = function (search) {
-        console.log('Searching the Web for: ' + search);
-        let request_params = {
-              method : 'GET',
-              hostname : host,
-              path : path + '?q=' + encodeURIComponent(search) + '&aspect=wide&imageType=Photo&size=Wallpaper',
-              headers : {
-                  'Ocp-Apim-Subscription-Key' : subscriptionKey,
-              }
-          };
-      
-          let req = https.request(request_params, response_handler);
-          req.end();
-      };
-      // Search bing with random search query from list
-      bing_web_search(searchQueries[Math.floor(Math.random() * searchQueries.length)]);
+        })
+      }
+      // Search google with random search query from list
+      google_image_search(searchQueries[Math.floor(Math.random() * searchQueries.length)]);
 }
 
 chooseBackground();
-runningJob.start();
+//runningJob.start();
